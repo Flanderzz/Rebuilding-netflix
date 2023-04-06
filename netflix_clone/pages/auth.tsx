@@ -1,6 +1,9 @@
 import Input from "@/components/input";
 import { useCallback, useState } from "react";
-
+import axios from "axios";
+import {signIn} from 'next-auth/react';
+import { FcGoogle } from "react-icons/fc";
+ 
 const Auth = () => {
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
@@ -11,6 +14,37 @@ const Auth = () => {
     const toggleVariant = useCallback(() => {
         setVariant((currentVariant) => currentVariant == 'login' ? 'register' : 'login');
     },[])
+
+    const login = useCallback(async () =>{
+        try {
+            await signIn('credentials', {
+                
+                email, 
+                password, 
+                callbackUrl: '/profiles'
+            });
+
+        } catch (error) {
+            console.log(error);
+        }
+    },[email, password]);
+
+    
+    const register = useCallback(async () => {
+        try {
+            await axios.post('/api/register',{ 
+
+                email,
+                name,
+                password
+            });
+            login();
+        } catch (error) {
+            console.log(error)
+        }
+
+    }, [email, name, password, login]);
+
 
 
     return(
@@ -48,9 +82,26 @@ const Auth = () => {
                                 value={password}
                             />
                         </div>
-                        <button className="bg-red-600 py-3 text-white rounded-md w-full mt-10 hover:bg-red-800 transition">
+                        <button onClick={variant == 'login'? login : register} className="bg-red-600 py-3 text-white rounded-md w-full mt-10 hover:bg-red-800 transition">
                             {variant == 'login' ? 'login' : 'Sign-Up'}
                         </button>
+                        <div className="flex flex-row items-center gap 4 mt-8 justify-center">
+                            <div onClick={() => signIn('google', {callbackUrl: '/profiles'})} className="
+                                
+                                w-10
+                                h-10
+                                bg-white
+                                rounded-full
+                                flex
+                                items-center
+                                justify-center
+                                cursor-pointer
+                                hover:opacity-70
+                                transition
+                            ">
+                                <FcGoogle size={35}/>
+                            </div>
+                        </div>
                         <p className="text-neutral-500 mt-12">
                             {variant == 'login' ? 'New to Webflix?' : 'Already with us?'}  
                             <span onClick={toggleVariant} className="text-white ml-1 hover:underline cursor-pointer px-1">
