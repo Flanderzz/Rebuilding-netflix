@@ -60,7 +60,7 @@ const FavoriteButton:React.FC<FavoriteButtonProps> = ({movieId}) => {
             justify-center 
             items-center 
             transition 
-            hover:bg-neutral-300
+            hover:bg-neutral-100
         ">
             <SwitchIcon className="text-white" size={20} />
         </div>
